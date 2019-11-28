@@ -175,8 +175,8 @@ public class DistributionOpponent {
     private void updateIssueWeigths() {
         //Initially, new weights are the copy of old weigths
         ArrayList<Double> newWeigths = copyWeightList(weightsOfIssues);
-        System.out.println("New weigths DUPA:");
-        System.out.println(newWeigths);
+        //System.out.println("New weigths DUPA:");
+        //System.out.println(newWeigths);
 
         /*Now, we want co calculate frequency distributions for new window*/
         previousWindowOptionFrequency = currentWindowOptionFrequency;
@@ -213,16 +213,16 @@ public class DistributionOpponent {
             }
 
              */
-            System.out.println("BEFORE THE CHANGE");
-            System.out.println(newWeigths);
+           // System.out.println("BEFORE THE CHANGE");
+           // System.out.println(newWeigths);
 
             if(!distributionsDifferent){
                 //increase weights
                 newWeigths.set(issueIndex,  newWeigths.get(issueIndex) + INCREASE_ALPHA * (1 - Math.pow(time, INCREASE_BETA)));
 
             }
-            System.out.println("AFTER CHANGE");
-            System.out.println(newWeigths);
+           // System.out.println("AFTER CHANGE");
+           // System.out.println(newWeigths);
 
         }
 
@@ -244,14 +244,15 @@ public class DistributionOpponent {
         //http://www.stat.yale.edu/Courses/1997-98/101/chigf.htm
 
         Double chiSquared = 0.0;
-        System.out.println("CHI BEFORE: " + chiSquared);
+        //System.out.println("CHI BEFORE: " + chiSquared);
+       // System.out.println(oldDistr);
 
         for(ValueDiscrete key: oldDistr.keySet()){
             //Old is expected
             chiSquared += Math.pow(oldDistr.get(key)-newDistr.get(key), 2)/oldDistr.get(key);
 
         }
-        System.out.println("Chi squared after: " + chiSquared);
+        //System.out.println("Chi squared after: " + chiSquared);
         return chiSquared < CHI_HYPOTHESIS;
     }
 
@@ -260,7 +261,6 @@ public class DistributionOpponent {
     //Frequency of windows
     private List<HashMap<ValueDiscrete, Double>> buildWindowFrequencyDistribution(ArrayList<Bid> currentWindowBids){
         List<HashMap<ValueDiscrete, Double>> distribution = getNewFrequencyDistributionMap(issues);
-
         //Add each value from each bid to the hasmap
         for(Bid bid : currentWindowBids){
             for(Issue issue : bid.getIssues()){
@@ -272,12 +272,16 @@ public class DistributionOpponent {
 
         //Normalization: divide every value in the distribution by the number of bids in the window
         Double count = ((Integer)currentWindowBids.size()).doubleValue();
+        //System.out.println("COUNT IS " + count);
 
         for(int i = 0; i < distribution.size(); i++){
             HashMap<ValueDiscrete, Double> map = distribution.get(i);
+           // System.out.println("DISTR BEFORE NORM: " + map);
+
             for(ValueDiscrete key : map.keySet()){
-                map.put(key, map.get(key) / count);
+                map.put(key, (map.get(key) + 1.0 )/ (count + 1.0));
             }
+           // System.out.println("DISTR AFTER NORM: " + map);
 
         }
 
