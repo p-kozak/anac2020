@@ -5,15 +5,21 @@ import genius.core.Bid;
 import genius.core.issue.Issue;
 import genius.core.issue.IssueDiscrete;
 import genius.core.issue.ValueDiscrete;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
 
+
+/*
+To initialise the class call the constructor with the single argument - list of issues of type List<Issue>
+Every time you receive a bid, call receiveBid(Bid bid, double time). You get time using getTimeLine().getTime()
+When you want to evaluate opponents bid use getBidsUtility(Bid bid)
+ */
+
 public class DistributionOpponent {
-    private final int WINDOW_SIZE = 25;
+    private final int WINDOW_SIZE = 7;
     private final double CHI_HYPOTHESIS = 0.05;
-    private final double INCREASE_ALPHA = 0.5;
-    private final double INCREASE_BETA = 0.5;
+    private final double INCREASE_ALPHA = 0.1;
+    private final double INCREASE_BETA = 5;
 
     private double time;
 
@@ -27,18 +33,16 @@ public class DistributionOpponent {
     private List<Issue> issues;
 
 
-    private int priorBids = 0;
-    //Value function estimation
-    //We assume, that the best option will be played the most and changed less frequently
+    public Double getBidsUtility(Bid bid){
+        Double utility = 0.0;
+        int issueCounter = 0;
+        for(Issue issue : bid.getIssues()){
+            ValueDiscrete val = (ValueDiscrete) bid.getValue(issue);
+            utility += weightsOfIssues.get(issueCounter) * valuesOfOptions.get(issueCounter).get(val);
+            issueCounter++;
+        }
+        return utility;
 
-    private double getOfferUtility(Bid bid ){
-        throw new NotImplementedException();
-    }
-
-    private void receiveOffer(Bid bid){
-        //We are going to update the values only if our agent
-        updateFrequencyCounter(bid, issuesOptionFrequency);
-        return;
     }
 
     //WHENEVER YOU USE ISSUE NUMBER, REMEMBER IT'S OFF BY ONE
@@ -49,8 +53,6 @@ public class DistributionOpponent {
         bidHistory = new ArrayList<>();
         valuesOfOptions = new  ArrayList<HashMap<ValueDiscrete, Double>>();
         currentWindowBids = new ArrayList<Bid>();
-
-
 
         for(Issue issue : issues){
 
@@ -92,7 +94,7 @@ public class DistributionOpponent {
     }
 
     public void receiveBid(Bid bid, double time){
-        //System.out.println(weightsOfIssues);
+        System.out.println("Bid util: " + getBidsUtility(bid));
         this.time = time;
         updateFrequencyCounter(bid, issuesOptionFrequency);
         updateValues(bid);
@@ -100,8 +102,8 @@ public class DistributionOpponent {
         if(currentWindowBids.size()>=WINDOW_SIZE){
             updateIssueWeigths();
             currentWindowBids = new ArrayList<Bid>();
-            printValuesForEachIssue();
-            System.out.println(weightsOfIssues);
+            //printValuesForEachIssue();
+            System.out.println("Dist: " + weightsOfIssues);
 
         }
 
@@ -213,8 +215,7 @@ public class DistributionOpponent {
             }
 
              */
-           // System.out.println("BEFORE THE CHANGE");
-           // System.out.println(newWeigths);
+
 
             if(!distributionsDifferent){
                 //increase weights
