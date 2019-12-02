@@ -32,6 +32,9 @@ public class DistributionOpponent {
     private ArrayList<Bid> currentWindowBids;
     private List<Issue> issues;
 
+    public ArrayList<Double> getWeigths(){
+        return weightsOfIssues;
+    }
 
     public Double getBidsUtility(Bid bid){
         Double utility = 0.0;
